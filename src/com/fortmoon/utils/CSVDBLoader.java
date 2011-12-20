@@ -612,7 +612,8 @@ public class CSVDBLoader {
 	public static void main(String[] args) throws InterruptedException, ParseException {
 		CSVDBLoader loader = new CSVDBLoader();
 		loader.getVersion();
-//		loader.load("USshort.csv");
+		loader.setFileName("USshort.csv");
+		loader.load();
 //		loader.load("US.txt");
 		Options options = new Options();
 
