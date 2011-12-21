@@ -53,6 +53,7 @@ import org.apache.log4j.Logger;
  * @since Dec 7, 2011 9:32:20 AM
  */
 public class CSVDBLoader {
+	
 	protected String token = "\t"; //FIXME: Add user define tokens
 	protected File file = null;
 	protected String fileName = null;
