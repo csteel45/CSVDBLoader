@@ -59,7 +59,7 @@ public class CSVDBLoader {
 	protected Connection con = null;
 	protected Statement st = null;
 	protected ResultSet rs = null;
-	protected int batchSize = 1000;
+	protected int batchSize = 200;
 	protected ArrayList<String> columnNames = new ArrayList<String>();
 	protected HashMap<String, ColumnBean> columns;
 	protected String url = "jdbc:mysql://presto270db.coksdj9a4svg.us-east-1.rds.amazonaws.com/BigData";
@@ -384,26 +384,6 @@ public class CSVDBLoader {
 		PreparedStatement stmt = null;
 		//Statement stmt = null;
 
-/*		
-	    String[] columnNames = { "id", "name", "content", "date_created" };
-	    Object[] inputValues = new Object[columnNames.length];
-	    inputValues[0] = new java.math.BigDecimal(100);
-	    inputValues[1] = new String("String Value");
-	    inputValues[2] = new String("This is my resume.");
-	    inputValues[3] = new Timestamp((new java.util.Date()).getTime());
-
-	    // prepare blob object from an existing binary column
-	    String insert = "insert into resume (id, name, content, date_created ) values(?, ?, ?, ?)";
-	    pstmt = conn.prepareStatement(insert);
-
-	    pstmt.setObject(1, inputValues[0]);
-	    pstmt.setObject(2, inputValues[1]);
-	    pstmt.setObject(3, inputValues[2]);
-	    pstmt.setObject(4, inputValues[3]);
-
-	    pstmt.executeUpdate();
-*/
-		//stmt.
 	    boolean first = true;
 	    StringBuffer insert = new StringBuffer("insert into " + this.tableName + " (");
 		for (String col : this.columnNames) {
@@ -423,8 +403,7 @@ public class CSVDBLoader {
 			first = false;
 		}
 		insert.append(")");
-		log.info("INSERT: " + insert);
-//System.exit(1);
+		log.info("Insert statement: " + insert);
 	    
 		try {
 			con = DriverManager.getConnection(url, user, password);
@@ -439,6 +418,9 @@ public class CSVDBLoader {
 			while (!complete) {
 				try {
 					statements = (ArrayList<String>) queue.poll(10, SECONDS);
+					if(statements == null) {
+						return;
+					}
 				}
 				catch (InterruptedException e) {
 					log.error("Poll timed out");
@@ -475,6 +457,7 @@ public class CSVDBLoader {
 			}
 			// statements.clear();
 		}
+		log.info("\nLoad complete. Goodbye.\n");
 	}
 
 	public String getVersion() {
@@ -612,9 +595,7 @@ public class CSVDBLoader {
 	public static void main(String[] args) throws InterruptedException, ParseException {
 		CSVDBLoader loader = new CSVDBLoader();
 		loader.getVersion();
-		loader.setFileName("USshort.csv");
-		loader.load();
-//		loader.load("US.txt");
+
 		Options options = new Options();
 
 		// add t option
@@ -630,12 +611,13 @@ public class CSVDBLoader {
 
 		CommandLineParser parser = new PosixParser();
 		CommandLine cmd = parser.parse( options, args);
-		if(cmd.hasOption("t")) {
-			loader.setFileName(cmd.getOptionValue("c"));
+		if(cmd.hasOption("f")) {
+			loader.setFileName(cmd.getOptionValue("f"));
 		}
 		else {
 		    System.err.println("USAGE");
 		}
+
 		loader.load();
 
 	}
