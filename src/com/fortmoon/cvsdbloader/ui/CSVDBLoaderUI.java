@@ -82,6 +82,7 @@ public class CSVDBLoaderUI {
 	 */
 	public CSVDBLoaderUI() {
 		initialize();
+		
 	}
 
 	/**
