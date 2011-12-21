@@ -18,13 +18,24 @@
  */
 package com.fortmoon.utils;
 
+import java.awt.Component;
+import java.io.Serializable;
+
 /**
  * @author Christopher Steel - FortMoon Consulting, Inc.
  *
  * @since Dec 16, 2011 10:45:02 PM
  */
-public class ColumnBean {
-	private int size = 1;
+public class ColumnBean extends Component implements Serializable {
+	public static final String COLUMN_SIZE = "COLUMN_SIZE";
+	public static final String IS_UNIQUE = "IS_UNIQUE";
+	public static final String IS_INDEXED = "IS_INDEXED";
+	public static final String IS_NULLABLE = "IS_NULLABLE";
+	public static final String IS_PRIMARY_KEY = "IS_PRIMARY_KEY";
+	public static final String SQL_TYPE = "SQL_TYPE";
+	public static final String NAME = "NAME";
+	public static final String IS_CHAR_BASED = "IS_CHAR_BASED";
+	private int columnSize = 1;
 	private boolean isUnique = true;
 	private boolean isIndexed = false;
 	private boolean isNullable = false;
@@ -33,19 +44,23 @@ public class ColumnBean {
 	private String name;
 	private boolean isCharBased = true;
 	
-
+	public ColumnBean() {
+		
+	}
+	
 	/**
-	 * @return the size
+	 * @return the columnSize
 	 */
-	public int getSize() {
-		return size;
+	public int getColumnSize() {
+		return columnSize;
 	}
 
 	/**
-	 * @param size the size to set
+	 * @param columnSize the columnSize to set
 	 */
-	public void setSize(int size) {
-		this.size = size;
+	public void setColumnSize(int columnSize) {
+		this.firePropertyChange(COLUMN_SIZE, this.columnSize, columnSize);
+		this.columnSize = columnSize;
 	}
 
 	/**
@@ -59,6 +74,7 @@ public class ColumnBean {
 	 * @param isUnique the isUnique to set
 	 */
 	public void setUnique(boolean isUnique) {
+		this.firePropertyChange(IS_UNIQUE, this.isUnique, isUnique);
 		this.isUnique = isUnique;
 	}
 
@@ -73,6 +89,7 @@ public class ColumnBean {
 	 * @param isIndexed the isIndexed to set
 	 */
 	public void setIndexed(boolean isIndexed) {
+		this.firePropertyChange(IS_INDEXED, this.isIndexed, isIndexed);
 		this.isIndexed = isIndexed;
 	}
 
@@ -87,6 +104,7 @@ public class ColumnBean {
 	 * @param isNullable the isNullable to set
 	 */
 	public void setNullable(boolean isNullable) {
+		this.firePropertyChange(IS_NULLABLE, this.isNullable, isNullable);
 		this.isNullable = isNullable;
 	}
 
@@ -101,6 +119,7 @@ public class ColumnBean {
 	 * @param isPrimaryKey the isPrimaryKey to set
 	 */
 	public void setPrimaryKey(boolean isPrimaryKey) {
+		this.firePropertyChange(IS_PRIMARY_KEY, this.isPrimaryKey, isPrimaryKey);
 		this.isPrimaryKey = isPrimaryKey;
 	}
 
@@ -115,6 +134,7 @@ public class ColumnBean {
 	 * @param type the type to set
 	 */
 	public void setType(SQLTYPE type) {
+		this.firePropertyChange(SQL_TYPE, this.type, type);
 		this.type = type;
 	}
 
@@ -129,12 +149,8 @@ public class ColumnBean {
 	 * @param name
 	 */
 	public void setName(String name) {
-		this.name = name;
-		
-	}
-	
-	public String toString() {
-		return "Name: " + name + " Type: " + type + " Size: " + size + " Unique: " + isUnique + " PK: " + isPrimaryKey +  " CharBased: " + isCharBased + "\n";
+		this.firePropertyChange(NAME, this.name, name);
+		this.name = name;		
 	}
 	
 	/**
@@ -147,19 +163,13 @@ public class ColumnBean {
 	/**
 	 * @param charBased the charBased to set
 	 */
-	public void setCharBased(boolean charBased) {
-		this.isCharBased = charBased;
+	public void setCharBased(boolean isCharBased) {
+		this.firePropertyChange(IS_CHAR_BASED, this.isCharBased, isCharBased);
+		this.isCharBased = isCharBased;
 	}
 	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+	public String toString() {
+		return "Name: " + name + " Type: " + type + " Size: " + columnSize + " Unique: " + isUnique + " PK: " + isPrimaryKey +  " CharBased: " + isCharBased + "\n";
 	}
-
-
-
 
 }

@@ -16,53 +16,43 @@
  * DERIVATIVES.
  * 
  */
-package com.fortmoon.cvsdbloader.ui;
+package com.fortmoon.cvsdbloader.view;
 
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import java.awt.BorderLayout;
-import javax.swing.JLabel;
-import javax.swing.JProgressBar;
-import javax.swing.SwingConstants;
 import java.awt.Color;
-import javax.swing.border.EtchedBorder;
-import javax.swing.JButton;
-import java.awt.Font;
-import java.awt.Dimension;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
 import java.awt.Component;
-import javax.swing.Box;
-import javax.swing.JMenuItem;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.ImageIcon;
-import java.awt.Toolkit;
-import javax.swing.border.TitledBorder;
-import javax.swing.BoxLayout;
-import javax.swing.UIManager;
+import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
-import javax.swing.JSpinner;
-import javax.swing.JList;
-import javax.swing.ListSelectionModel;
-import javax.swing.AbstractListModel;
-import javax.swing.JComboBox;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JTextField;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.RowSpec;
-import javax.swing.JFileChooser;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.SpinnerNumberModel;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
 import javax.swing.JToggleButton;
-import java.awt.Rectangle;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+
+import com.fortmoon.utils.ColumnBean;
 
 /**
  * @author Christopher Steel - FortMoon Consulting, Inc.
@@ -76,7 +66,8 @@ public class CSVDBLoaderUI {
 	private final JProgressBar progressBar = new JProgressBar();
 	private JTextField textField;
 	private JTextField textField_1;
-
+	private JLabel lblNewLabel;
+private ColumnBean columnBean = new ColumnBean();
 	/**
 	 * Create the application.
 	 */
@@ -91,7 +82,7 @@ public class CSVDBLoaderUI {
 	private void initialize() {
 		frame = new JFrame();
 		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(CSVDBLoaderUI.class.getResource("/images/new_database.png")));
-		frame.setBackground(new Color(105, 105, 105));
+		frame.setBackground(UIManager.getColor("InternalFrame.background"));
 		frame.setMinimumSize(new Dimension(800, 600));
 		frame.setTitle("CSV DB Loader");
 		frame.setBounds(100, 100, 450, 300);
@@ -149,7 +140,7 @@ public class CSVDBLoaderUI {
 		fl_filenamePanel.setAlignment(FlowLayout.LEADING);
 		panel_5.add(filenamePanel);
 		
-		JLabel lblNewLabel = new JLabel("File name:");
+		lblNewLabel = new JLabel("File name:");
 		lblNewLabel.setPreferredSize(new Dimension(80, 14));
 		lblNewLabel.setMinimumSize(new Dimension(60, 14));
 		filenamePanel.add(lblNewLabel);
@@ -390,6 +381,7 @@ public class CSVDBLoaderUI {
 		
 		aboutMenuItem.setMnemonic('A');
 		helpMenu.add(aboutMenuItem);
+		initDataBindings();
 		
 	}
 
@@ -408,5 +400,7 @@ public class CSVDBLoaderUI {
 				}
 			}
 		});
+	}
+	protected void initDataBindings() {
 	}
 }

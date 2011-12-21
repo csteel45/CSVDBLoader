@@ -17,7 +17,7 @@
  * 
  * Copyright Version 1.0
  */
-package com.fortmoon.cvsdbloader.ui;
+package com.fortmoon.cvsdbloader.view;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;

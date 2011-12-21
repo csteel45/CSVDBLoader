@@ -239,9 +239,9 @@ public class CSVDBLoader {
 				int valSize = val.length();
 				if(skipBlobs && valSize > 255)
 					valSize = 255;
-				if (columns.get(colName).getSize() < valSize) {
-					columns.get(colName).setSize(valSize);
-					log.debug("Size for column: " + columns.get(colName).getName() + " = " + columns.get(colName).getSize());
+				if (columns.get(colName).getColumnSize() < valSize) {
+					columns.get(colName).setColumnSize(valSize);
+					log.debug("Size for column: " + columns.get(colName).getName() + " = " + columns.get(colName).getColumnSize());
 				}
 		    	digest.update(val.getBytes());
 		    	String hash = new String(digest.digest());
@@ -345,11 +345,11 @@ public class CSVDBLoader {
 			cs.append(colName);
 			cs.append(" " + column.getType().toString());
 			if(column.getType() == SQLTYPE.VARCHAR)
-				cs.append("(" + column.getSize() + ")");
+				cs.append("(" + column.getColumnSize() + ")");
 			if(!column.isNullable())
 				cs.append(" NOT NULL");
 			if(column.isUnique())
-				cs.append(" UNIQUE");
+				cs.append(" IS_UNIQUE");
 			if(column.isPrimaryKey())
 				cs.append(" PRIMARY KEY");
 
