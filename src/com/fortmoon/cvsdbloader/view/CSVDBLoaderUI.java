@@ -67,7 +67,7 @@ public class CSVDBLoaderUI {
 	private JTextField textField;
 	private JTextField textField_1;
 	private JLabel lblNewLabel;
-private ColumnBean columnBean = new ColumnBean();
+	private ColumnBean columnBean = new ColumnBean();
 	/**
 	 * Create the application.
 	 */
@@ -335,7 +335,8 @@ private ColumnBean columnBean = new ColumnBean();
 		Component horizontalStrut = Box.createHorizontalStrut(20);
 		horizontalStrut.setPreferredSize(new Dimension(5, 0));
 		panel.add(horizontalStrut, BorderLayout.WEST);
-		progressBar.setValue(80);
+		progressBar.setString("Ready.");
+		progressBar.setIndeterminate(true);
 		progressBar.setMinimumSize(new Dimension(10, 20));
 		progressBar.setPreferredSize(new Dimension(146, 20));
 		panel.add(progressBar, BorderLayout.CENTER);

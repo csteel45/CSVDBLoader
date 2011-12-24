@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="lib/LiquidLnF.jar"/>
 	<classpathentry kind="lib" path="lib/beansbinding-1.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/forms-1.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/commons-codec-1.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

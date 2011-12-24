@@ -46,6 +46,8 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.log4j.Logger;
 
+import com.fortmoon.cvsdbloader.model.ColumnModel;
+
 
 /**
  * @author Christopher Steel - FortMoon Consulting, Inc.
@@ -62,7 +64,8 @@ public class CSVDBLoader {
 	protected ResultSet rs = null;
 	protected int batchSize = 200;
 	protected ArrayList<String> columnNames = new ArrayList<String>();
-	protected HashMap<String, ColumnBean> columns;
+	protected ColumnModel columnModel = new ColumnModel();
+//	protected HashMap<String, ColumnBean> columns;
 	protected String url = "jdbc:mysql://presto270db.coksdj9a4svg.us-east-1.rds.amazonaws.com/BigData";
 	protected String user = "presto";
 	protected String password = "presto";
@@ -169,18 +172,18 @@ public class CSVDBLoader {
     	}
     	log.info("Column names: " + this.columnNames);
 
-    	this.columns = new HashMap<String, ColumnBean>(this.columnNames.size());
+//    	this.columns = new HashMap<String, ColumnBean>(this.columnNames.size());
     	for(String name : this.columnNames) {
     		ColumnBean column = new ColumnBean();
     		column.setName(name);
-    		columns.put(name, column);
+    		columnModel.add(column);
     	}
     }
     
     private void getColumnClasses() throws IOException {
 		log.trace("called");
 		//TODO: Scan file x times for x columns. Change to once if performance is hit.
-		for(int i = 0; i < this.columnNames.size(); i++) {
+		for(int i = 0; i < this.columnModel.size(); i++) {
 			if(log.isInfoEnabled())
 				log.info("Getting column class for column: " + this.columnNames.get(i));
 			getColumnClass(i);
@@ -190,8 +193,7 @@ public class CSVDBLoader {
 		// Let's just get use the first unique Int/BigInt as the PK
 		boolean foundPK = false;
 		// Set all the null columns to VARCHAR
-		for(String col : this.columnNames) {
-			ColumnBean column = this.columns.get(col);
+		for(ColumnBean column : this.columnModel) {
 			SQLTYPE type = column.getType();
 			if(type.equals(SQLTYPE.NULL)) {
 				column.setType(SQLTYPE.VARCHAR);
@@ -205,7 +207,7 @@ public class CSVDBLoader {
 				column.setCharBased(false);
 			}
 		}
-		log.info("Column Types: " + this.columns);
+		log.info("Column Types: " + this.columnModel);
     }
 	
 	private void getColumnClass(int columnNum) throws IOException {
@@ -215,33 +217,34 @@ public class CSVDBLoader {
 		TreeSet<String> uniques = new TreeSet<String>();
 		numLines = 1;
 		String line = lr.readLine();
+		ColumnBean column = this.columnModel.get(columnNum);
 		while (line != null) {
 			String[] result = line.split("\t");
 			String val = result[columnNum];
-			String colName = this.columnNames.get(columnNum);
+//			String colName = this.columnNames.get(columnNum);
 			if (val.isEmpty()) {
 				if (log.isDebugEnabled())
-					log.debug("********NULL Value for column: " + this.columnNames.get(columnNum) + "*********");
-				this.columns.get(colName).setNullable(true);
-				columns.get(colName).setUnique(false);
+					log.debug("********NULL Value for column: " + column + "*********");
+				column.setNullable(true);
+				column.setUnique(false);
 			} 
 			else {
 				if (log.isDebugEnabled())
-					log.debug("Value for column: " + colName + " = " + val + " line = " + line);
+					log.debug("Value for column: " + column.getName() + " = " + val + " line = " + line);
 				SQLTYPE colType = SQLUtil.getType(val);
 				if(skipBlobs && (colType == SQLTYPE.BLOB || colType == SQLTYPE.LONGBLOB))
 					colType = SQLTYPE.VARCHAR;
 
 				log.debug("SQL Type: " + colType);
-				if (columns.get(colName).getType().getValue() > colType.getValue()) {
-					columns.get(colName).setType(colType);
+				if (column.getType().getValue() > colType.getValue()) {
+					column.setType(colType);
 				}
 				int valSize = val.length();
 				if(skipBlobs && valSize > 255)
 					valSize = 255;
-				if (columns.get(colName).getColumnSize() < valSize) {
-					columns.get(colName).setColumnSize(valSize);
-					log.debug("Size for column: " + columns.get(colName).getName() + " = " + columns.get(colName).getColumnSize());
+				if (column.getColumnSize() < valSize) {
+					column.setColumnSize(valSize);
+					log.debug("Size for column: " + column.getName() + " = " + column.getColumnSize());
 				}
 		    	digest.update(val.getBytes());
 		    	String hash = new String(digest.digest());
@@ -249,7 +252,7 @@ public class CSVDBLoader {
 					uniques.add(hash);
 				else {
 					uniques = null;
-					columns.get(colName).setUnique(false);
+					column.setUnique(false);
 				}
 					
 			}
@@ -302,7 +305,7 @@ public class CSVDBLoader {
 				log.error("*****WARNING****** Found '\"' in data, replacing with '" + " at column: " + this.columnNames.get(i) + " line: " + lineNum + " index: " + line.indexOf("\""));
 				val = val.replace('"', '\'');
 			}
-			boolean charBased = this.columns.get(this.columnNames.get(i)).getCharBased();
+			boolean charBased = this.columnModel.get(i).getCharBased();
 			if(!first)
 				buf.append(",");
 			if(!charBased) {
@@ -334,22 +337,21 @@ public class CSVDBLoader {
         Statement stmt = null;
 		StringBuffer cs;
 		cs = new StringBuffer("create table " + tableName + " (");
-		for(String colName : this.columnNames) {
+		for(ColumnBean column : this.columnModel) {
 			if(first) {
 				first = false;
 			}
 			else {
 			 cs.append(", ");
 			}
-			ColumnBean column = this.columns.get(colName);
-			cs.append(colName);
+			cs.append(column.getName());
 			cs.append(" " + column.getType().toString());
 			if(column.getType() == SQLTYPE.VARCHAR)
 				cs.append("(" + column.getColumnSize() + ")");
 			if(!column.isNullable())
 				cs.append(" NOT NULL");
 			if(column.isUnique())
-				cs.append(" IS_UNIQUE");
+				cs.append(" UNIQUE");
 			if(column.isPrimaryKey())
 				cs.append(" PRIMARY KEY");
 
