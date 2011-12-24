@@ -20,9 +20,6 @@ package com.fortmoon.utils;
 
 import java.sql.Date;
 
-import org.apache.log4j.Logger;
-import java.sql.Types;
-
 /**
  * @author Christopher Steel - FortMoon Consulting, Inc.
  *
@@ -102,16 +99,10 @@ public class SQLUtil {
 	private static boolean isFloat(String string) {
 		if (string != null && string.contains(".")) {
 			try {
-				Double value = Double.parseDouble(string);
-				if(value < Float.MAX_VALUE && value > Float.MIN_VALUE) {
-					Float.parseFloat(string);
+				Float value = Float.parseFloat(string);
+				if(Float.NEGATIVE_INFINITY < value && value < Float.MAX_VALUE) {
 					return true;
 				}
-				System.out.println("Missed a float: " + string);
-				System.out.println("Double value: " + value);
-				System.out.println("Float Max: " + Float.MAX_VALUE + " Float Min: " + Float.MIN_VALUE);
-				System.out.println("Float parse: " + Float.parseFloat(string));
-				System.exit(1);
 			} catch (IllegalArgumentException iae) {
 
 			}
@@ -122,8 +113,10 @@ public class SQLUtil {
 	private static boolean isDouble(String string) {
 		if (string != null  && string.contains(".")) {
 			try {
-				Double.parseDouble(string);
-				return true;
+				Double value = Double.parseDouble(string);
+				if(Double.NEGATIVE_INFINITY < value && value < Double.MAX_VALUE) {
+					return true;
+				}
 			} catch (IllegalArgumentException iae) {
 
 			}
@@ -137,8 +130,10 @@ public class SQLUtil {
 	private static boolean isBigInt(String string) {
 		if (string != null && !(string.length() > 1 && string.startsWith("0"))) {
 			try {
-				Long.parseLong(string);
-				return true;
+				Long value = Long.parseLong(string);
+				if(Long.MIN_VALUE < value && value < Long.MAX_VALUE) {
+					return true;
+				}
 			} catch (IllegalArgumentException iae) {
 
 			}
@@ -203,6 +198,7 @@ public class SQLUtil {
 	public static void main(String[] args) {
 		String blob = new String(new char[65534]);
 		String longBlob = new String(new char[65536]);
+		
 		System.out.println("Type of <null>:			" + getType(null));
 		System.out.println("Type of '':			" + getType(""));
 		System.out.println("Type of 2011-08-23:		" + getType("2011-08-23"));
@@ -232,7 +228,6 @@ public class SQLUtil {
 		System.out.println("Double max:			" + Double.MAX_VALUE);
 		System.out.println("TYPE.FLOAT compareTo TYPE.DOUBLE:			" + (SQLTYPE.FLOAT.compareTo(SQLTYPE.DOUBLE)));
 		System.out.println("TYPE.DOUBLE compareTo TYPE.FLOAT:			" + (SQLTYPE.DOUBLE.compareTo(SQLTYPE.FLOAT)));
-		System.out.println("TYPE.FLOAT compareTo TYPE.FLOAT:			" + (SQLTYPE.FLOAT.compareTo(SQLTYPE.FLOAT)));
 	}
 
 
