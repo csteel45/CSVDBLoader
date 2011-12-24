@@ -102,11 +102,16 @@ public class SQLUtil {
 	private static boolean isFloat(String string) {
 		if (string != null && string.contains(".")) {
 			try {
-				Double value = Double.valueOf(string);
+				Double value = Double.parseDouble(string);
 				if(value < Float.MAX_VALUE && value > Float.MIN_VALUE) {
 					Float.parseFloat(string);
 					return true;
 				}
+				System.out.println("Missed a float: " + string);
+				System.out.println("Double value: " + value);
+				System.out.println("Float Max: " + Float.MAX_VALUE + " Float Min: " + Float.MIN_VALUE);
+				System.out.println("Float parse: " + Float.parseFloat(string));
+				System.exit(1);
 			} catch (IllegalArgumentException iae) {
 
 			}
